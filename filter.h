@@ -18,6 +18,7 @@ public:
     string getName();
     string getCategory();
     bool getIsEnabled();
+    string getFilterName() const;
     virtual void apply(Image& img)=0;
     virtual ~Filter();
 };

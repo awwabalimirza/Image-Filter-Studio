@@ -4,18 +4,18 @@ FlipHorizontalFilter::FlipHorizontalFilter() : Filter(9, "Flip Horizontal", "Geo
 FlipHorizontalFilter::~FlipHorizontalFilter() {}
 
 void FlipHorizontalFilter::apply(Image& img) {
+    int rows = img.getrow();
     int cols = img.getcol();
-    for (int r = 0; r < img.getrow(); ++r) {
+
+    for (int r = 0; r < rows; ++r) {
         // Only go halfway across the columns
         for (int c = 0; c < cols / 2; ++c) {
-            Pixel& p1 = img.at(r, c);
-            Pixel& p2 = img.at(r, cols - 1 - c);
             
-            // Swap logic
-            int tempR = p1.getR(), tempG = p1.getG(), tempB = p1.getB();
+            // Clean, object-level swap (No need for getR or setR!)
+            Pixel temp = img.at(r, c);
+            img.at(r, c) = img.at(r, cols - 1 - c);
+            img.at(r, cols - 1 - c) = temp;
             
-            p1.setR(p2.getR()); p1.setG(p2.getG()); p1.setB(p2.getB());
-            p2.setR(tempR); p2.setG(tempG); p2.setB(tempB);
         }
     }
 }

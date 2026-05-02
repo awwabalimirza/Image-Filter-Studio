@@ -28,5 +28,5 @@ int Filter::getId() { return id; }
 string Filter::getName() { return name; }
 string Filter::getCategory() { return category; }
 bool Filter::getIsEnabled() { return isEnabled; }
-
+string Filter::getFilterName() const { return name; }
 Filter::~Filter() {}

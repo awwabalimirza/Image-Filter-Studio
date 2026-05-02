@@ -1,29 +1,41 @@
 #ifndef CUSTOMER_H
 #define CUSTOMER_H
-#include "user.h"
+#include "User.h"
 #include<iostream>
-using namespace std;
 #include<string>
+using namespace std;
 
 class Customer: public User{
 private:
-    string cnic;
     string fullName;
     string gender;
     string phoneNumber;
     string city;
     bool isBlocked;
+
 public:
     Customer();
-    Customer(string username, string password, string cnic, string fullName, string gender, string phoneNumber, string city) : User(username, password) {}
+    Customer(string cnic, string password, string fullName, string gender, string phoneNumber, string city, bool isBlocked = false) : User(cnic, password){
+        this->fullName = fullName;
+        this->gender = gender;
+        this->phoneNumber = phoneNumber;    
+        this->city = city;
+        this->isBlocked = isBlocked;
+        }
+
     void menu() override;
-    string getCnic();
-    string getFullName();
-    string getGender();
-    string getPhoneNumber();
-    string getCity();
-    bool getIsBlocked();
+    
+    // Getters
+    string getCnic() const {} 
+    string getFullName() const;
+    string getGender() const;
+    string getPhoneNumber() const;
+    string getCity() const;
+    bool getIsBlocked() const;
+    
+    // Setters
     void setIsBlocked(bool isBlocked);
+
     void loadImage();
     void viewHistory();
 };
