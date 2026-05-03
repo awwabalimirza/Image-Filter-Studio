@@ -12,7 +12,7 @@ Image::Image(int row, int col) {
     this->row = row;
     this->col = col;
 
-    //allocation of new 2d array
+    //allocation of dynamic 2d array
     grid = new Pixel*[row];
     for (int i = 0; i < row; ++i) {
         grid[i] = new Pixel[col];
@@ -24,7 +24,7 @@ Image::Image(const Image& other) {
     this->row = other.row;
     this->col = other.col;
 
-    //allocation of new 2d array
+    //allocation of dynamic 2d array
     grid = new Pixel*[row];
     for (int i = 0; i < row; ++i) {
         grid[i] = new Pixel[col];
@@ -54,7 +54,7 @@ Image::Image(string path) {
         grid[i] = new Pixel[col];
     }
 
-    //transfer data from 1D 'data' array to your 2D 'grid'
+    //transfer data from 1D array to 2D grid
     for (int y = 0; y < row; ++y) {
         for (int x = 0; x < col; ++x) {
             //finding pixel's position 
@@ -66,7 +66,6 @@ Image::Image(string path) {
             grid[y][x] = Pixel(r, g, b); 
         }
     }
-
     stbi_image_free(data); 
 }
 
@@ -75,7 +74,6 @@ Image::~Image() {
     for (int i = 0; i < row; ++i) {
         delete[] grid[i];
     }
-    
     delete[] grid;
 }
 
@@ -100,12 +98,12 @@ void Image::displayASCII() {
         return;
     }
 
-    cout << "=== Image Preview (" << col << "x" << row << ") ===" << endl;
+    cout << "========= Image Preview (" << col << "x" << row << ") =========" << endl;
 
-    // Scale down the preview if the image is massive so it fits in the console
+    //Decreases the size of image if the image is big so it fits in the console
     int step = 1;
     if (col > 100 || row > 100) {
-        step = col / 60; // Limits width to roughly 60 characters
+        step = col / 60; // Limits width to 60 characters
         if (step == 0) step = 1;
     }
 
@@ -125,10 +123,10 @@ void Image::save(string path) {
         return;
     }
 
-    // Create a 1D array to hold the flattened pixel data
+    // 1D Array to hold the pixel data
     unsigned char* temp_1D_array = new unsigned char[row * col * 3];
 
-    for (int y = 0; y < row; ++y) {
+    for (int y = 0; y < row; y++) {
         for (int x = 0; x < col; ++x) {
             int index = 3 * (y * col + x);
 
@@ -138,7 +136,7 @@ void Image::save(string path) {
         }
     }
 
-    // Write the file to disk using stb_image_write
+    // Writing the image using stb_image_write
     int success = stbi_write_png(path.c_str(), col, row, 3, temp_1D_array, col * 3); 
     
     if (success != 0) {

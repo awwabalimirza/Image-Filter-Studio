@@ -26,7 +26,6 @@ string FilterSession::generateTimestamp() {
 // Builds the filter string for sessions.txt 
 string FilterSession::buildFilterString() {
     string result = "";
-    // Dynamically check size instead of tracking filterCount
     for (int i = 0; i < pipeline.size(); ++i) { 
         result += pipeline[i]->getFilterName();
 
@@ -41,13 +40,13 @@ string FilterSession::buildFilterString() {
     return result;
 }
 
-// Safely push to the back of the vector
+//push into of the vector
 FilterSession& FilterSession::addFilter(Filter* f) {
     pipeline.push_back(f); 
     return *this; 
 }
 
-// Safely delete memory and empty the vector
+//delete memory and empty the vector
 void FilterSession::clearPipeline() {
     for (int i = 0; i < pipeline.size(); ++i) {
         delete pipeline[i];

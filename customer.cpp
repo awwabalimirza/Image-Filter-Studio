@@ -1,7 +1,7 @@
 #include "Customer.h"
 #include <fstream>
 
-// Default Constructor
+//Default Constructor
 Customer::Customer() : User("Unknown", "Unassigned") {
     this->fullName = "Unknown";
     this->gender = "Unknown";
@@ -10,14 +10,14 @@ Customer::Customer() : User("Unknown", "Unassigned") {
     this->isBlocked = false;
 }
 
-// Getters
+//Getters
 string Customer::getFullName() const { return fullName; }
 string Customer::getGender() const { return gender; }
 string Customer::getPhoneNumber() const { return phoneNumber; }
 string Customer::getCity() const { return city; }
 bool Customer::getIsBlocked() const { return isBlocked; }
 
-// Setters
+//Setters
 void Customer::setIsBlocked(bool isBlocked) { 
     this->isBlocked = isBlocked; 
 }
@@ -25,13 +25,13 @@ void Customer::setIsBlocked(bool isBlocked) {
 void Customer::menu() {
     int sessionsCompleted = 0;
     
-    // Scan sessions.txt manually to count this user's completed sessions
+    //Scan sessions.txt to count this user's completed sessions
     ifstream file("sessions.txt");
     if (file.is_open()) {
         string line;
         while (getline(file, line)) {
             bool match = true;
-            // Manually check if the start of the line matches this customer's CNIC (ID)
+            //Manually check if the start of the line matches this customer's CNIC (ID)
             for (int i = 0; ID[i] != '\0'; i++) {
                 if (line[i] != ID[i]) {
                     match = false;
@@ -44,7 +44,7 @@ void Customer::menu() {
         }
         file.close();
     }
-    cout << "\n";
+    cout << endl;
     cout << "╔════════════════════════════════════════════════╗\n";
     cout << "║    Welcome, " << fullName << "                    ║"<< endl;
     cout << "║    Sessions completed: " << sessionsCompleted << "                       ║" << endl;

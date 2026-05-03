@@ -2,15 +2,11 @@
 #include <string>
 #include <fstream>
 #include <vector>
-
-// --- CORE CLASSES ---
 #include "Admin.h"
 #include "Customer.h"
 #include "CustomerManager.h"
 #include "FilterSession.h"
 #include "Image.h"
-
-// --- ALL 10 FILTER CLASSES ---
 #include "FILTERS/GrayscaleFilter.h"
 #include "FILTERS/InvertFilter.h"
 #include "FILTERS/BrightnessFilter.h"
@@ -32,7 +28,6 @@ bool authenticateCustomer(string cnic, string password, Customer& loggedInUser) 
         vector<string> fields;
         string currentField = "";
         
-        // Parse the | delimited line using permitted .length() and .push_back()
         for (int i = 0; i < line.length(); i++) {
             if (line[i] == '|') {
                 fields.push_back(currentField);
@@ -43,16 +38,16 @@ bool authenticateCustomer(string cnic, string password, Customer& loggedInUser) 
         }
         fields.push_back(currentField); // Push the last field (IsBlocked flag)
 
-        // Check if CNIC and Password match
+        //Checking if CNIC and Password match
         if (fields[0] == cnic && fields[1] == password) {
-            // Check if blocked
+            //Checking if blocked
             if (fields[6] == "1") {
-                cout << "\nAccess Denied: Your account has been blocked by an Admin.\n";
+                cout << "\nAccess Denied: Your account has been blocked by an Admin." << endl;
                 file.close();
                 return false;
             }
             
-            // Populate the Customer object
+            // Create the Customer object
             loggedInUser = Customer(fields[0], fields[1], fields[2], fields[3], fields[4], fields[5], false);
             file.close();
             return true;
@@ -79,7 +74,6 @@ int main() {
         cin >> mainChoice;
 
         if (mainChoice == 1) {
-            // --- ADMIN LOGIN ---
             string password;
             cout << "\nEnter Admin Password: ";
             cin >> password;
@@ -98,17 +92,17 @@ int main() {
                     else if (adminChoice == 3) adminUser.viewAllSessions();
                 }
             } else {
-                cout << "\nIncorrect Admin password!\n";
+                cout << "\nIncorrect Admin password!" << endl;
             }
 
         } else if (mainChoice == 2) {
-            // --- CUSTOMER LOGIN (3 Attempt Lockout) ---
+            //Max 3 Attempts for Customer Login
             string cnic, password;
             bool loggedIn = false;
             Customer activeCustomer;
 
-            for (int attempts = 1; attempts <= 3; attempts++) {
-                cout << "\n--- Customer Login (Attempt " << attempts << " of 3) ---\n";
+            for (int attempts = 0; attempts < 3; attempts++) {
+                cout << "\n------- Customer Login (Attempt " << attempts + 1 << " of 3) -------" << endl;
                 cout << "Enter CNIC: ";
                 cin >> cnic;
                 cout << "Enter Password: ";
@@ -118,16 +112,16 @@ int main() {
                     loggedIn = true;
                     break; 
                 } else {
-                    cout << "Invalid credentials or account blocked.\n";
+                    cout << "Invalid credentials or account blocked." << endl;
                 }
             }
 
             if (!loggedIn) {
-                cout << "\nMaximum login attempts reached. Returning to main menu.\n";
+                cout << "\nMaximum login attempts reached. Returning to main menu.\n" << endl;
                 continue; 
             }
 
-            // --- ACTIVE CUSTOMER WORKFLOW ---
+            //After successful login, showing customer menu
             int custChoice = 0;
             Image* currentImage = nullptr;
 
@@ -137,28 +131,26 @@ int main() {
                 cin >> custChoice;
 
                 if (custChoice == 1) {
-                    // Quick view of the catalog
-                    cout << "\n--- Available Filters ---\n";
+                    cout << "\n---------- Available Filters ----------\n";
                     ifstream cat("catalog.txt");
                     string catLine;
                     if (cat.is_open()) {
                         while(getline(cat, catLine)) {
                             string displayLine = "";
                             for(int i = 0; i < catLine.length(); i++) {
-                                if (catLine[i] == '|') displayLine += " - ";
-                                else displayLine += catLine[i];
+                                displayLine += catLine[i];
                             }
                             cout << displayLine << endl;
                         }
                         cat.close();
                     } else {
-                        cout << "Catalog file not found.\n";
+                        cout << "Catalog file not found." << endl;
                     }
 
                 } else if (custChoice == 2) {
-                    // Load Image
+                    //Load Image
                     string imagePath;
-                    cout << "Enter path to image file (e.g., photo.jpg): ";
+                    cout << "Enter path to image file: ";
                     cin >> imagePath;
                     
                     if (currentImage != nullptr) delete currentImage; 
@@ -176,11 +168,9 @@ int main() {
                         continue;
                     }
 
-                    // FIX 1: Pass the local 'cnic' string variable directly to bypass Customer memory issues
                     FilterSession session(currentImage, cnic);
                     int filterID = -1;
 
-                    // FIX 2: Replaced \n with endl to force the console to print immediately
                     cout << "\n=== Build Filter Pipeline ===" << endl; 
                     
                     while (filterID != 0) {
@@ -188,8 +178,6 @@ int main() {
                         cin >> filterID;
 
                         if (filterID == 0) break;
-
-                        // MAP IDs TO SPECIFIC FILTER CLASSES
                         if (filterID == 1) session.addFilter(new GrayscaleFilter());
                         else if (filterID == 2) session.addFilter(new InvertFilter());
                         else if (filterID == 3) session.addFilter(new BrightnessFilter());
@@ -200,9 +188,7 @@ int main() {
                         else if (filterID == 8) session.addFilter(new BoxBlurFilter());
                         else if (filterID == 9) session.addFilter(new FlipHorizontalFilter());
                         else if (filterID == 10) session.addFilter(new FlipVerticalFilter());
-                        else {
-                            cout << "Invalid Filter ID. Please check the catalog.\n";
-                        }
+                        else { cout << "Invalid Filter ID. Please check the catalog." << endl;}
                     }
 
                     if (session.getPipelineSize() > 0) {
@@ -217,39 +203,44 @@ int main() {
                             session.recordSession();
                         }
                     } else {
-                        cout << "Pipeline empty. No filters applied.\n";
+                        cout << "Pipeline empty. No filters applied." << endl;
                     }
 
                 } else if (custChoice == 4) {
-                    cout << "Use Option 3 to build, apply, and save the pipeline at once.\n";
+                    cout << "Use Option 3 to build, apply, and save the pipeline at once." << endl;
                 } else if (custChoice == 5) {
                     activeCustomer.viewHistory();
                 }
             }
             
-            // Clean up image memory when customer logs out
+            //Clean up image memory when customer logs out
             if (currentImage != nullptr) {
                 delete currentImage;
                 currentImage = nullptr;
             }
 
         } else if (mainChoice == 3) {
-            // --- REGISTRATION ---
+            //REGISTRATION
             string cnic, pass, name, gender, phone, city;
-            cout << "\n--- New Customer Registration ---\n";
-            cout << "Enter 13-digit CNIC: "; cin >> cnic;
-            cout << "Enter 9-char Password (1 uppercase, 1 digit): "; cin >> pass;
-            
+            cout << "\n--- New Customer Registration ---" << endl;
+            cout << "Enter 13-digit CNIC: "; 
+            cin >> cnic;
+            cout << "Enter 9-char Password (1 uppercase, 1 digit): "; 
+            cin >> pass;
             cin.ignore(); 
-            cout << "Enter Full Name: "; getline(cin, name);
-            cout << "Enter Gender (M/F/Other): "; cin >> gender;
-            cout << "Enter Phone Number: "; cin >> phone;
-            cout << "Enter City: "; cin >> city;
+            cout << "Enter Full Name: "; 
+            getline(cin, name);
+            cout << "Enter Gender (M/F/Other): "; 
+            cin >> gender;
+            cout << "Enter Phone Number: "; 
+            cin >> phone;
+            cout << "Enter City: "; 
+            cin >> city;
 
             customerManager.registerCustomer(cnic, pass, name, gender, phone, city);
         }
     }
 
-    cout << "\nExiting Image Filter Studio. Goodbye!\n";
+    cout << "\nExiting Image Filter Studio." << endl;
     return 0;
 }

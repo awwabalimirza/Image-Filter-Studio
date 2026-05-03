@@ -55,8 +55,7 @@ void Admin::manageFilterCatalog() {
         cin >> choice;
 
         if (choice == 1) {
-            // --- VIEW CATALOG (List Format) ---
-            cout << "\n--- Filter Catalog ---\n";
+            cout << "\n----------- Filter Catalog -----------\n";
             
             ifstream inFile("catalog.txt");
             string line;
@@ -69,11 +68,7 @@ void Admin::manageFilterCatalog() {
                     
                     // Replace the '|' with ' - ' for a cleaner list view
                     for (int i = 0; i < line.length(); i++) {
-                        if (line[i] == '|') {
-                            displayLine += " - ";
-                        } else {
                             displayLine += line[i];
-                        }
                     }
                     
                     cout << displayLine << endl;
@@ -83,16 +78,14 @@ void Admin::manageFilterCatalog() {
             if (!hasData) cout << "Catalog is empty or missing.\n";
 
         } else if (choice == 2) {
-            // --- TOGGLE FILTER ENABLE/DISABLE ---
             string targetID;
-            cout << "Enter 2-digit Filter ID to toggle (e.g., 01, 10): ";
+            cout << "Enter 2-digit Filter ID to toggle : ";
             cin >> targetID;
 
             vector<string> lines;
             string line;
             bool found = false;
 
-            // 1. Read file into memory using .push_back()
             ifstream inFile("catalog.txt");
             if (inFile.is_open()) {
                 while (getline(inFile, line)) {
@@ -123,17 +116,17 @@ void Admin::manageFilterCatalog() {
                     // Toggle the flag
                     if (lines[i][lastIndex] == '1') {
                         lines[i][lastIndex] = '0';
-                        cout << "Filter " << targetID << " is now DISABLED.\n";
+                        cout << "Filter " << targetID << " is now DISABLED." << endl;
                     } else if (lines[i][lastIndex] == '0') {
                         lines[i][lastIndex] = '1';
-                        cout << "Filter " << targetID << " is now ENABLED.\n";
+                        cout << "Filter " << targetID << " is now ENABLED." << endl;
                     }
                 }
                 outFile << lines[i] << endl;
             }
             outFile.close();
             
-            if (!found) cout << "Filter ID not found.\n";
+            if (!found) cout << "Filter ID not found." << endl;
         }
     }
 }
@@ -155,8 +148,7 @@ void Admin::manageCustomers() {
         cin >> choice;
 
         if (choice == 1) {
-            // --- VIEW ALL CUSTOMERS ---
-            cout << "\n--- Registered Customers ---\n";
+            cout << "\n----------- Registered Customers -----------\n";
             ifstream inFile("customers.txt");
             string line;
             if (inFile.is_open()) {
@@ -165,11 +157,10 @@ void Admin::manageCustomers() {
                 }
                 inFile.close();
             } else {
-                cout << "No customers found.\n";
+                cout << "No customers found." << endl;
             }
 
         } else if (choice == 2) {
-            // --- SEARCH CUSTOMER ---
             string searchCnic;
             cout << "Enter 13-digit CNIC to search: ";
             cin >> searchCnic;
@@ -180,7 +171,7 @@ void Admin::manageCustomers() {
             
             if (inFile.is_open()) {
                 while (getline(inFile, line)) {
-                    // Manually check if the first 13 characters match the CNIC
+                    //check if the first 13 characters match the CNIC
                     bool match = true;
                     for (int i = 0; i < 13 ; i++) {
                         if (line[i] != searchCnic[i]) {
@@ -196,10 +187,10 @@ void Admin::manageCustomers() {
                 }
                 inFile.close();
             }
-            if (!found) cout << "Customer not found.\n";
+            if (!found) cout << "Customer not found." << endl;
 
         } else if (choice == 3) {
-            // --- BLOCK CUSTOMER ---
+            //BLOCK CUSTOMER
             string targetCnic;
             cout << "Enter CNIC of customer to block: ";
             cin >> targetCnic;
@@ -217,7 +208,7 @@ void Admin::manageCustomers() {
                 inFile.close();
             }
 
-            // Rewrite file, modifying the target customer
+            // modifying the target customer
             ofstream outFile("customers.txt", ios::trunc);
             for (int i = 0; i < lines.size(); i++) {
                 bool match = true;
@@ -227,14 +218,14 @@ void Admin::manageCustomers() {
 
                 if (match) {
                     found = true;
-                    // Change the last character (IsBlocked) from 0 to 1
+                    //Change the last character (IsBlocked) from 0 to 1
                     int lastIndex = lines[i].length() - 1;
                     if (lines[i][lastIndex] == '0') {
                         lines[i][lastIndex] = '1';
                     }
                     outFile << lines[i] << endl;
                     
-                    // Add to blocked_cnics.txt
+                    //Add to blocked_cnics.txt
                     ofstream blockFile("blocked_cnics.txt", ios::app);
                     blockFile << targetCnic << endl;
                     blockFile.close();
@@ -245,19 +236,18 @@ void Admin::manageCustomers() {
                 }
             }
             outFile.close();
-            if (!found) cout << "Customer not found.\n";
+            if (!found) cout << "Customer not found." << endl;
 
         } else if (choice == 4) {
-            // --- DELETE CUSTOMER (Using vector<string> exactly as requested) ---
+            //DELETE CUSTOMER
             string targetCnic;
-            cout << "Enter CNIC of customer to entirely delete: ";
+            cout << "Enter CNIC of customer to delete: ";
             cin >> targetCnic;
 
             vector<string> lines;
             string line;
             bool found = false;
 
-            // 1. Read all lines into the vector[cite: 1]
             ifstream inFile("customers.txt");
             if (inFile.is_open()) {
                 while (getline(inFile, line)) {
@@ -265,12 +255,12 @@ void Admin::manageCustomers() {
                 }
                 inFile.close();
             } else {
-                cout << "Error: Could not open database.\n";
-                continue; // Skip the rest of the loop
+                cout << "Error: Could not open customers file." << endl;
+                continue; //Skip
             }
 
             // 2. Rewrite the file, skipping the deleted one[cite: 1]
-            ofstream outFile("customers.txt", ios::trunc); // ios::trunc wipes the file clean
+            ofstream outFile("customers.txt", ios::trunc); //ios::trunc wipes the file
             for (int i = 0; i < lines.size(); i++) {
                 bool match = true;
                 // Check if the line starts with our target CNIC
@@ -283,7 +273,6 @@ void Admin::manageCustomers() {
 
                 if (match) {
                     found = true; 
-                    // We DO NOT write this line to the file, effectively deleting it[cite: 1]
                 } else {
                     outFile << lines[i] << endl; // Keep all other lines
                 }
