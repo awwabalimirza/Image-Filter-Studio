@@ -47,7 +47,7 @@ void Customer::menu() {
     cout << endl;
     cout << "╔════════════════════════════════════════════════╗\n";
     cout << "║    Welcome, " << fullName << "                    ║"<< endl;
-    cout << "║    Sessions completed: " << sessionsCompleted << "                       ║" << endl;
+    cout << "║    Sessions completed: " << sessionsCompleted << "                      ║" << endl;
     cout << "╠════════════════════════════════════════════════╣\n";
     cout << "║    1.  Browse Filter Catalog                   ║\n";
     cout << "║    2.  Load Image                              ║\n";
@@ -59,7 +59,7 @@ void Customer::menu() {
 }
 
 void Customer::loadImage() {
-    cout << "Load Image function will be handled by the session manager." << endl;
+    cout << "Load Image function will be handled by the MAIN." << endl;
 }
 
 void Customer::viewHistory() {

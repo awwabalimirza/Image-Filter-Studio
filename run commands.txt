@@ -1,0 +1,2 @@
+ g++ *.cpp FILTERS/*.cpp -I FILTERS -I . -o ImageStudio
+chcp 65001

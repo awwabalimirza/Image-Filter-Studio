@@ -1,6 +1,6 @@
 #include "BrightnessFilter.h"
 
-BrightnessFilter::BrightnessFilter() : Filter(3, "Brightness Adjust", "Pixel Transform", true), brightnessLevel(0) {}
+BrightnessFilter::BrightnessFilter() : Filter(3, "Brightness Adjust", "Pixel Transform", true), brightnessLevel(20) {}
 BrightnessFilter::~BrightnessFilter() {}
 
 void BrightnessFilter::apply(Image& img) {
